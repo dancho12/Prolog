@@ -1,51 +1,57 @@
 domains
-    i = integer
-    list = i*
-    multiList = list*
- 
- 
+	i = integer % целое число
+	list = i* % список целых чисел
+	multiList = list*
+
+
 predicates
-    nondeterm go
-    nondeterm do(char)
-    nondeterm readList(list)
- 
-    nondeterm task_71(list, i, multiList)
- 
- 
+	nondeterm go % главное меню программы
+	nondeterm do(char) % запускает выполнение полученного на вход задания
+	nondeterm readList(list) % вводит список от пользователя
+	% задание 71 – создаёт список пар в которых первая компонента – элемент исходного списка, вторая – число его подряд идущих повторений.
+	nondeterm task_71(list, i, multiList)
+
+
 clauses
-    go :-
-        write("=== SELECT TASK ===\n"),
-        write("Press 1 - task 71\n"),
-        write("Press 0 - to exit\n\n"),
-        write("Task: "), readchar(A),
-        write(A), nl, do(A),
-        go.
- 
-    do('1') :-
-        write("LIST: "), nl, readList(L), nl,
-        write("LIST: ", L), nl,
-   
-        task_71(L, 0, R),
-        write("REPEATS: ", R), nl.
- 
- 
-    do('0') :-
-        write("Good bye!"), nl,
-        exit.
- 
- 
-    readList([H|T]) :-
-        write("Add element: "),
-        readint(H),
-        readList(T).
-   
- 
-    readList([]).
-   
-    task_71([H], N, [[H,N]]).
-    task_71([H,H|T], N, R) :- NewN = N + 1, task_71([H|T], NewN, R).
-    task_71([H1,H2|T], N, [[H1, N]|RT]) :- task_71([H2|T], 0, RT).
- 
+	go :-
+		write("=== SELECT TASK ===\n"),
+		write("Press 1 - task 71\n"),
+		write("Press 0 - to exit\n\n"),
+		write("Task: "), readchar(A),
+		write(A), nl, do(A),
+		go.
+
+	do('1') :- % задание 71
+		write("LIST: "), nl, readList(L), nl,
+		write("LIST: ", L), nl,
+		task_71(L, 0, R),
+		write("REPEATS: ", R), nl.
+
+
+	do('0') :-
+		write("Good bye!"), nl,
+		exit.
+
+	% ввод списка от пользователя
+	readList([H|T]) :-
+		write("Add element: "),
+		readint(H), % читаем число и помещаем его в голову
+		readList(T). % запускаем себя для хвоста
+	
+	% если введено не число – прекращаем рекурсию, возвращаем пустой список
+	readList([]).
+
+
+	% задание 71 – создаёт список пар в которых первая компонента – элемент исходного списка, вторая – число его подряд идущих повторений.
+	% список из одного элемента первращается в список [Этот элемент, N] N - число его повторений на предыдущих итерациях
+	% для списка, в голове которого идут 2 одинаковых элемента - увеличиваем N на 1
+	% для списка, в голове которого разные элементы - сохраняем первый элемент в список-результат вместе с его N
+	% а для второго элемента и остального списка - сбрасываем N в 0 идём по списку дальше
+	task_71([H], N, [[H,N]]).
+	task_71([H,H|T], N, R) :- NewN = N + 1, task_71([H|T], NewN, R).
+	task_71([H1,H2|T], N, [[H1, N]|RT]) :- task_71([H2|T], 0, RT).
+
+
+
+
 goal go.
-
-

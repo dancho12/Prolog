@@ -1,71 +1,39 @@
-domains
-	i = integer
-	list = i*
+Predicates
 
+Nondeterm nok(real,real,real,real)
+nondeterm run 
+nondeterm do(char) 
 
-predicates
-	nondeterm go
-	nondeterm do(char)
-	nondeterm readList(list)
+Clauses
 
-	nondeterm elementCount(list, i, i)
+nok(OX,OY,X,Y):-%если второе число меньше первого, то прибавляем к первому числу изначальное второе число
+OX>OY, NY = OY + Y, nok(OX,NY,X,Y).
 
-	nondeterm task_48(list, list, list)
+nok(OX,OY,X,Y):-%если первое число меньше второго, то к первому числу прибавляется первое изначальное число
+OX<OY, NX = OX + X, nok(NX,Y,X,Y).
 
+nok(OX,OY,_,_):-%когда они равны, то выводится число
+OX=OY, write("NOK = ",OX),nl.
 
-clauses
-	go :-
-		write("=== SELECT TASK ===\n"),
-		write("Press 1 - task 48\n"),
-		write("Press 0 - to exit\n\n"),
-		write("Task: "), readchar(A),
-		write(A), nl, do(A),
-		go.
+run:- %меню выбора
+nl, 
+write("***Enter***\n\n"), 
+write("- 1 - to start counter\n\n"), 
+write("- 0 - to EXIT\n\n"), 
+write("**************************\n"), 
+readchar(X),
+do(X).
 
-	do('1') :-
-		write("LIST: "), nl, readList(L),
-		write("LIST: ", L), nl,
-		task_48(L, L, R),
-		write("RESULT: ", R), nl.
+do('1'):-%ввод чисел
+write("Write first number\n"),
+write(">>"), readreal(X),nl,
+write("Write second number\n"),
+write(">>"), readreal(Y), nl,
+nok(X,Y,X,Y),
+run.
 
+do('0'):- write(" - That`s all."), exit. 
 
-	do('0') :-
-		write("Good bye!"), nl,
-		exit.
+do(_):- write("bad value\n\n"). 
 
-
-	readList([H|T]) :-
-		write("Add element: "),
-		readint(H),
-		readList(T).
-	
-
-	readList([]).
-
-
-
-
-
-	elementCount([], _, 0).
-	
-	elementCount([H|T], El, Res) :-
-		H = El,
-		elementCount(T, El, NewRes),
-		Res = NewRes + 1, !.
-	
-	elementCount([_|T], El, Res) :-
-		elementCount(T, El, Res).
-
-
-
-
-
-	task_48(_, [], []).
-	task_48(L, [H|T], [H|RT]) :- elementCount(L, H, C), C = 1, task_48(L, T, RT).
-	task_48(L, [_|T], R) :- task_48(L, T, R).
-
-
-
-
-goal go.
-
+goal run.
